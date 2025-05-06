@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ChromeOS Kernel Failure</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      color: white;
+      font-family: 'Lucida Console', Monaco, monospace;
+      height: 100%;
+      overflow: hidden;
+    }
+    #image {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: none;
+    }
+    #terminal {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      white-space: pre;
+      display: none;
+    }
+    .red { color: red; }
+    .white { color: white; }
+  </style>
+</head>
+<body>
+  <img id="image" src="https://raw.githubusercontent.com/tommyfart/devious-chromebook-pranks/refs/heads/main/assets/IMG_3275.png" width="300">
+  <div id="terminal"></div>
+
+  <script>
+    // Request fullscreen
+    function goFullscreen() {
+      const elem = document.documentElement;
+      if (elem.requestFullscreen) elem.requestFullscreen();
+      else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+      else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
+    }
+
+    window.onload = async () => {
+      goFullscreen();
+
+      // Black screen for 5 sec
+      await new Promise(r => setTimeout(r, 5000));
+
+      // Show image in center for 3 seconds
+      const img = document.getElementById('image');
+      img.style.display = 'block';
+      await new Promise(r => setTimeout(r, 3000));
+      img.style.display = 'none';
+
+      // Show terminal-style output
+      const terminal = document.getElementById('terminal');
+      terminal.style.display = 'block';
+
+      const messages = [
+        '[  <span class="red">FAILED</span>  <span class="white">] ChromeOS has failed to load.</span>',
+        '[  <span class="red">FAILED</span>  <span class="white">] ChromeOS failed to boot into recovery.</span>',
+        '[  <span class="red">FAILED</span>  <span class="white">] Kernel is missing.</span>',
+        '[  <span class="red">FAILED</span>  <span class="white">] ChromeOS is missing.</span>',
+        '[  <span class="red">FAILED</span>  <span class="white">] ChromeOS can\'t boot. Please insert a bootable SD Card or USB. (note: the blue usb port wont work for recovery.)</span>'
+      ];
+
+      const delays = [2000, 1000, 0, 0, 3000]; // in milliseconds
+      for (let i = 0; i < messages.length; i++) {
+        await new Promise(r => setTimeout(r, delays[i]));
+        terminal.innerHTML += messages[i] + '\n';
+      }
+    };
+  </script>
+</body>
+</html>
