@@ -2,36 +2,72 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Glitch ChromeOS Prank</title>
+  <title>Broken ChromeOS Screen</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
       background: black;
-      color: #0f0;
-      font-family: 'Lucida Console', Monaco, monospace;
-      height: 100%;
       overflow: hidden;
+      height: 100%;
+      width: 100%;
     }
-    #glitch {
-      position: absolute;
-      top: 0;
-      left: 0;
-      padding: 20px;
-      white-space: pre;
-      font-size: 14px;
-      line-height: 1.2;
+    canvas {
+      display: block;
     }
   </style>
 </head>
 <body>
-  <div id="glitch"></div>
-
+  <canvas id="glitchCanvas"></canvas>
   <audio id="tone" autoplay loop>
     <source src="https://github.com/tommyfart/devious-chromebook-pranks/raw/main/assets/1590hz_10s.wav" type="audio/wav">
   </audio>
 
   <script>
+    const canvas = document.getElementById('glitchCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    function randomInt(min, max) {
+      return Math.floor(Math.random() * (max - min) + min);
+    }
+
+    function drawGlitch() {
+      ctx.fillStyle = 'black';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = 0; i < 100; i++) {
+        let x = randomInt(0, canvas.width);
+        let y = randomInt(0, canvas.height);
+        let w = randomInt(20, 300);
+        let h = randomInt(1, 5);
+
+        ctx.fillStyle = `rgb(${randomInt(100,255)}, ${randomInt(100,255)}, ${randomInt(100,255)})`;
+        ctx.fillRect(x, y, w, h);
+      }
+
+      // Horizontal scanlines
+      for (let y = 0; y < canvas.height; y += 3) {
+        ctx.fillStyle = 'rgba(0,0,0,0.1)';
+        ctx.fillRect(0, y, canvas.width, 1);
+      }
+
+      // Random screen flicker
+      if (Math.random() < 0.05) {
+        ctx.fillStyle = 'rgba(255,255,255,0.1)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    setInterval(drawGlitch, 100);
+
     function goFullscreen() {
       const elem = document.documentElement;
       if (elem.requestFullscreen) elem.requestFullscreen();
@@ -39,29 +75,9 @@
       else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
     }
 
-    function randomGlitchLine(width = 60) {
-      const chars = "█▒▓░/\\|_=-*#@";
-      let line = "";
-      for (let i = 0; i < width; i++) {
-        line += Math.random() < 0.1 ? chars[Math.floor(Math.random() * chars.length)] : " ";
-      }
-      return line;
-    }
-
-    function updateGlitch() {
-      const glitchDiv = document.getElementById("glitch");
-      const height = Math.floor(window.innerHeight / 18);
-      let output = "";
-      for (let i = 0; i < height; i++) {
-        output += randomGlitchLine() + "\n";
-      }
-      glitchDiv.textContent = output;
-    }
-
     window.onload = () => {
       goFullscreen();
-      setInterval(updateGlitch, 100); // update glitch every 100ms
-      document.getElementById("tone").play().catch(() => {}); // start tone loop
+      document.getElementById('tone').play().catch(() => {});
     };
   </script>
 </body>
