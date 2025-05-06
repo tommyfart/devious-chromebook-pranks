@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Broken ChromeOS Screen</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      overflow: hidden;
+      height: 100%;
+      width: 100%;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="glitchCanvas"></canvas>
+  <audio id="tone" autoplay loop>
+    <source src="https://github.com/tommyfart/devious-chromebook-pranks/raw/main/assets/1590hz_10s.wav" type="audio/wav">
+  </audio>
+
+  <script>
+    const canvas = document.getElementById('glitchCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    function randomInt(min, max) {
+      return Math.floor(Math.random() * (max - min) + min);
+    }
+
+    function drawGlitch() {
+      ctx.fillStyle = 'black';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = 0; i < 100; i++) {
+        let x = randomInt(0, canvas.width);
+        let y = randomInt(0, canvas.height);
+        let w = randomInt(20, 300);
+        let h = randomInt(1, 5);
+
+        ctx.fillStyle = `rgb(${randomInt(100,255)}, ${randomInt(100,255)}, ${randomInt(100,255)})`;
+        ctx.fillRect(x, y, w, h);
+      }
+
+      // Horizontal scanlines
+      for (let y = 0; y < canvas.height; y += 3) {
+        ctx.fillStyle = 'rgba(0,0,0,0.1)';
+        ctx.fillRect(0, y, canvas.width, 1);
+      }
+
+      // Random screen flicker
+      if (Math.random() < 0.05) {
+        ctx.fillStyle = 'rgba(255,255,255,0.1)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    setInterval(drawGlitch, 100);
+
+    function goFullscreen() {
+      const elem = document.documentElement;
+      if (elem.requestFullscreen) elem.requestFullscreen();
+      else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+      else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
+    }
+
+    window.onload = () => {
+      goFullscreen();
+      document.getElementById('tone').play().catch(() => {});
+    };
+  </script>
+</body>
+</html>
