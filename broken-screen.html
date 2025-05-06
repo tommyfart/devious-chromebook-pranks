@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Glitch ChromeOS Prank</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      color: #0f0;
+      font-family: 'Lucida Console', Monaco, monospace;
+      height: 100%;
+      overflow: hidden;
+    }
+    #glitch {
+      position: absolute;
+      top: 0;
+      left: 0;
+      padding: 20px;
+      white-space: pre;
+      font-size: 14px;
+      line-height: 1.2;
+    }
+  </style>
+</head>
+<body>
+  <div id="glitch"></div>
+
+  <audio id="tone" autoplay loop>
+    <source src="https://github.com/tommyfart/devious-chromebook-pranks/raw/main/assets/1590hz_10s.wav" type="audio/wav">
+  </audio>
+
+  <script>
+    function goFullscreen() {
+      const elem = document.documentElement;
+      if (elem.requestFullscreen) elem.requestFullscreen();
+      else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+      else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
+    }
+
+    function randomGlitchLine(width = 60) {
+      const chars = "█▒▓░/\\|_=-*#@";
+      let line = "";
+      for (let i = 0; i < width; i++) {
+        line += Math.random() < 0.1 ? chars[Math.floor(Math.random() * chars.length)] : " ";
+      }
+      return line;
+    }
+
+    function updateGlitch() {
+      const glitchDiv = document.getElementById("glitch");
+      const height = Math.floor(window.innerHeight / 18);
+      let output = "";
+      for (let i = 0; i < height; i++) {
+        output += randomGlitchLine() + "\n";
+      }
+      glitchDiv.textContent = output;
+    }
+
+    window.onload = () => {
+      goFullscreen();
+      setInterval(updateGlitch, 100); // update glitch every 100ms
+      document.getElementById("tone").play().catch(() => {}); // start tone loop
+    };
+  </script>
+</body>
+</html>
